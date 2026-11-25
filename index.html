@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2026 台股手續費折扣 (2折/28折 vs 6折) × 定期定額複利試算器</title>
+  <meta name="description" content="一秒試算台股與 ETF 買賣手續費、證交稅 (0.3%/0.1%)，對比傳統 20 元低收與 1 元低收 (2折) 一年差多少錢，並試算定期定額存股複利資產。" />
+  <meta name="keywords" content="台股手續費計算機,大戶投2折手續費,股票手續費1元低收,ETF證交稅0.1%,定期定額複利試算" />
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4296280593601685"
+     crossorigin="anonymous"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "2026 台股手續費折扣 (2折/28折 vs 6折) × 定期定額複利試算器",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "All",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TWD" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "台股買進1萬元手續費怎麼算？", "acceptedAnswer": {"@type": "Answer", "text": "牌告手續費為成交金額 × 0.1425%（10,000元約14元）。若券商給2折且低收1元，實收僅約2～3元；若一般券商低收20元則會被收滿20元。"}}]}
+  </script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --accent: #ea580c;
+      --accent-bg: #fff7ed;
+      --good: #059669;
+      --warn: #d97706;
+      --danger: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .container { max-width: 960px; margin: 0 auto; padding: 20px 16px 48px; }
+    header { text-align: center; margin-bottom: 24px; }
+    header h1 { font-size: 1.6rem; margin: 0 0 8px; }
+    header p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+    .badge {
+      display: inline-block; background: #e0f2fe; color: var(--primary-dark);
+      font-size: 0.78rem; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+    }
+    .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+    .tab-btn {
+      padding: 12px; border: 1px solid var(--border); background: var(--card);
+      border-radius: 10px; font-size: 0.98rem; font-weight: 600; cursor: pointer; color: var(--muted);
+    }
+    .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 680px) { .grid-2 { grid-template-columns: 1fr; } }
+    label { display: block; font-size: 0.88rem; font-weight: 600; margin-bottom: 6px; }
+    input[type="number"], select {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background: #fff;
+    }
+    .pill-group, .preset-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .pill, .chip {
+      padding: 7px 12px; border: 1px solid var(--border); background: #f8fafc;
+      border-radius: 8px; font-size: 0.86rem; font-weight: 600; cursor: pointer;
+    }
+    .pill.active { background: #e0f2fe; border-color: var(--primary); color: var(--primary-dark); }
+    .chip { border-radius: 999px; font-weight: 500; }
+    .chip:hover { border-color: var(--primary); color: var(--primary-dark); }
+    .result-box { margin-top: 18px; padding: 16px; border-radius: 12px; background: #f1f5f9; }
+    .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    .metric { background: #fff; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border); }
+    .metric .label { font-size: 0.8rem; color: var(--muted); }
+    .metric .value { font-size: 1.3rem; font-weight: 700; margin-top: 2px; }
+    .metric .value.highlight { color: var(--primary-dark); }
+    .metric .value.good { color: var(--good); }
+    .metric .value.warn { color: var(--warn); }
+    .metric .value.danger { color: var(--danger); }
+    .gear-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+    .gear-card {
+      border: 1px solid var(--border); border-radius: 12px; padding: 14px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .gear-tag {
+      display: inline-block; font-size: 0.75rem; font-weight: 700; color: var(--accent);
+      background: var(--accent-bg); padding: 2px 8px; border-radius: 6px; margin-bottom: 6px;
+    }
+    .gear-card h3 { font-size: 1rem; margin: 0 0 6px; }
+    .gear-card p { font-size: 0.85rem; color: var(--muted); margin: 0 0 12px; }
+    .cta-btn {
+      display: block; text-align: center; padding: 9px 12px; border-radius: 8px;
+      background: var(--accent); color: #fff; text-decoration: none; font-weight: 700; font-size: 0.9rem;
+    }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.88rem; }
+    th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { color: var(--muted); font-weight: 600; }
+    .seo-section h2 { font-size: 1.15rem; margin: 0 0 10px; }
+    .seo-section h3 { font-size: 1rem; margin: 18px 0 6px; color: var(--primary-dark); }
+    .seo-section p, .seo-section li { font-size: 0.92rem; color: #334155; }
+    .hidden { display: none; }
+    footer { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 28px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">依據 2026 台股證交稅率 (股票0.3% / ETF 0.1% / 債券ETF免稅)</div>
+      <h1>2026 台股手續費折扣 × 定期定額複利試算</h1>
+      <p>秒算買賣損益平衡點、比較「2折1元低收 vs 6折20元低收」一年省多少，以及長期存股複利</p>
+    </header>
+
+    
+        <section class="card">
+          <div class="grid-2">
+            <div><label for="tradeAmt">單筆買進金額（元，例如零股 5,000 或整張 50,000）</label><input type="number" id="tradeAmt" value="10000" min="100" step="1000" /></div>
+            <div><label for="secType">交易標的類型</label>
+              <select id="secType">
+                <option value="etf" selected>一般台股 ETF（賣出證交稅 0.1%）</option>
+                <option value="stock">一般上市櫃股票（賣出證交稅 0.3%）</option>
+                <option value="bond_etf">債券型 ETF（2026年底前免證交稅 0%）</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid-2" style="margin-top:12px;">
+            <div><label for="discA">方案 A：低手續費券商（2折，最低 1 元）</label><input type="number" id="discA" value="2.0" min="0.1" max="10" step="0.1" /></div>
+            <div><label for="discB">方案 B：一般傳統券商（6折，最低 20 元）</label><input type="number" id="discB" value="6.0" min="0.1" max="10" step="0.1" /></div>
+          </div>
+          <div class="result-box">
+            <div class="result-grid">
+              <div class="metric"><div class="label">方案 A 買+賣總交易成本</div><div class="value good" id="costAEl">--</div></div>
+              <div class="metric"><div class="label">方案 B 買+賣總交易成本</div><div class="value warn" id="costBEl">--</div></div>
+              <div class="metric"><div class="label">小資單筆來回現省</div><div class="value highlight" id="saveEl">--</div></div>
+              <div class="metric"><div class="label">方案 A 漲多少就回本</div><div class="value" id="breakEvenEl">--</div></div>
+            </div>
+          </div>
+        </section>
+
+    <section class="card">
+      <h2 style="font-size: 1.15rem; margin: 0 0 6px;">高高利交割帳戶與小資存股開戶推薦</h2>
+      <p style="margin: 0 0 14px; color: var(--muted); font-size: 0.88rem;">零股或定期定額每次省下 19 元低收差額，一年下來就多賺好幾張手續費（含合作推廣連結）</p>
+      <div class="gear-grid" id="gearGrid"></div>
+    </section>
+
+    <article class="card seo-section">
+      
+          <h2>為什麼小資買零股或定期定額，有沒有「1 元低收」差這麼多？</h2>
+          <p>傳統券商每筆交易手續費最低收 <strong>20 元</strong>。如果你每次只買 3,000～10,000 元的零股或 ETF，按 0.1425% × 6 折算明明不到 9 元，卻仍會被收滿 20 元！改用支援 <strong>2 折＋最低 1 元</strong> 的數位券商（如大戶投／豐存股），買賣一趟就能現省 30～38 元，長期複利差距非常可觀。</p>
+    </article>
+
+    <footer>
+      <p>註：債券型 ETF 免徵證交稅優惠延長至 2026/12/31；各券商折扣與低收門檻以官網最新公告為準。 | <a href="https://jimmycmhsieh0801-cloud.github.io/">更多實用工具總目錄</a></p>
+    </footer>
+  </div>
+
+  <script src="affiliate_config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    if (typeof AFFILIATE_GEARS !== "undefined") {
+      const grid = document.getElementById("gearGrid");
+      if (grid && !grid.innerHTML.trim()) {
+        grid.innerHTML = AFFILIATE_GEARS.map(
+          (g) => `
+          <div class="gear-card">
+            <div>
+              <span class="gear-tag">${g.tag}</span>
+              <h3>${g.title}</h3>
+              <p>${g.desc}</p>
+            </div>
+            <a class="cta-btn" href="${g.url}" target="_blank" rel="noopener noreferrer nofollow">${g.cta} →</a>
+          </div>`
+        ).join("");
+      }
+    }
+  </script>
+</body>
+</html>
